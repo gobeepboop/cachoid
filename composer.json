@@ -1,0 +1,28 @@
+{
+    "name": "beep/cachoid",
+    "description": "Cachoid provides an expressive API for caching models, collections, and paginators.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Robbie Garvey",
+            "email": "robbiecgarvey@gmail.com"
+        }
+    ],
+    "require": {
+        "illuminate/support": "^5.4",
+        "illuminate/cache": "^5.4",
+        "illuminate/database": "^5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Beep\\Cachoid\\": "src/",
+            "Beep\\Cachoid\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.2",
+        "illuminate/pagination": "^5.4",
+        "illuminate/events": "^5.4"
+    }
+}
