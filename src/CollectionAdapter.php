@@ -80,7 +80,7 @@ class CollectionAdapter extends Adapter implements Contract
      */
     protected function key(): string
     {
-        return "collection:{$this->name}.{$this->cappedAt}.{$this->offset}";
+        return "collection:{$this->name}:{$this->cappedAt}:{$this->offset}";
     }
 
     /**

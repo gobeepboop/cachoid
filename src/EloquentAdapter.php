@@ -72,7 +72,7 @@ class EloquentAdapter extends Adapter implements AdapterContract
      */
     protected function key(): string
     {
-        return $this->name . '.' . $this->identifier;
+        return "models:{$this->name}:{$this->identifier}";
     }
 
     /**

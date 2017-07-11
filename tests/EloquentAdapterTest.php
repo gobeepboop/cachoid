@@ -29,7 +29,7 @@ class EloquentAdapterTest extends TestCase
     public function test_cached_models_can_be_retrieved(): void
     {
         $expected = new User(['name' => 'Robbie']);
-        $key      = 'users.' . $expected->id;
+        $key      = 'models:users:' . $expected->id;
 
         $this->adapter->withName(User::class)
                       ->identifiedBy($expected->id)

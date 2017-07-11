@@ -36,7 +36,7 @@ class CollectionAdapterTest extends TestCase
             new User(['id' => 2, 'name' => 'Michael'])
         ]);
 
-        $key      = 'collection:users.15.0';
+        $key      = 'collection:users:15:0';
 
         $this->adapter->withName(User::class)
                       ->cappedAt(15)
