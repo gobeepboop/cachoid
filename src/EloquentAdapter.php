@@ -60,10 +60,10 @@ class EloquentAdapter extends Adapter implements AdapterContract
         // Set the key.
         $this->withName($model)->identifiedBy($model->getKey());
 
-        // Flush all the potentially paginated tags of the model.
+        // Flush all the potentially collected and paginated tags of the model.
         $this->cache->tags([$this->generateUniqueModelTag($model, $model->getKey())])->flush();
 
-        // Forget the actual model by key.
+        // Destroy the model itself from the cache.
         return $this->cache->forget($this->key());
     }
 
