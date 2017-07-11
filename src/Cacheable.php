@@ -17,6 +17,16 @@ trait Cacheable
     protected static $cachoidManager;
 
     /**
+     * Boot the Cacheable trait and register the model observer.
+     *
+     * @return void
+     */
+    public static function bootCacheable(): void
+    {
+        static::observe(ModelObserver::class);
+    }
+
+    /**
      * Caches the Model.
      *
      * @return void

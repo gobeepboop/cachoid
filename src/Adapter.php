@@ -190,6 +190,10 @@ abstract class Adapter implements Contract
         // Tap for the first value to determine the Model.
         $model = $value->first();
 
+        if (! $this->usesCacheable($model)) {
+            return $paginator ?? $value;
+        }
+
         // Collect all of the model keys.
         // Afterwards merge with the tags after transformation.
         $this->tags->merge(collect($this->determineIds($value))->transform(function ($key) use ($model) {
