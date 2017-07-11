@@ -103,6 +103,9 @@ $paginator = $cachoid->paginator(User::class, 15, 1)->remember(15, function () {
 });
 ```
 
+# Collections
+*Section ToDo*
+
 ## ToDo
 * Documentation clean-up.
 * An extensive set of tests, with Mockery, and a build-up of the SQLite "feature" tests (such as ModelObserverTest)
