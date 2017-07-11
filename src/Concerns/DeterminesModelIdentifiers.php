@@ -18,8 +18,15 @@ trait DeterminesModelIdentifiers
     {
         if ($value instanceof Collection) {
             $value = $value->reject(function ($item): bool {
-                return $this->usesCacheable($item);
-            })->map;
+                return ! $this->usesCacheable($item);
+            });
+
+            if ($value->isEmpty()) {
+                return null;
+            }
+
+            // Set to Higher Order Messages with map.
+            $value = $value->map;
         } elseif (! $this->usesCacheable($value)) {
             return null;
         }
