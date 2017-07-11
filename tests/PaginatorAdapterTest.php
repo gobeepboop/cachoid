@@ -2,11 +2,9 @@
 
 namespace Beep\Cachoid\Tests;
 
-use PHPUnit\Framework\TestCase;
 use Beep\Cachoid\PaginatorAdapter;
 use Illuminate\Cache\ArrayStore;
 use Illuminate\Cache\Repository;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\Paginator;
 
@@ -17,7 +15,7 @@ class PaginatorAdapterTest extends TestCase
      */
     protected $adapter;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -55,5 +53,36 @@ class PaginatorAdapterTest extends TestCase
         $actual = $this->adapter->get($key);
         $this->assertInstanceOf(Paginator::class, $actual);
         $this->assertEquals(2, $actual->count());
+    }
+
+    /**
+     * Tests cached paginators with models are busted on model observer event.
+     *
+     * @return void
+     */
+    public function test_cached_paginators_with_models_are_busted_on_model_update(): void
+    {
+        $page    = 1;
+        $perPage = 15;
+
+        $model = tap(new User(['id' => 1, 'name' => 'Robbie']))->save();
+
+        $expected = new Paginator(new Collection([
+            $model,
+            new User(['id' => 2, 'name' => 'Michael']),
+        ]), $perPage, $page);
+
+        $this->manager->paginator()->withName(User::class)
+                      ->onPage($page)
+                      ->showing($perPage)
+                      ->remember(10, function () use ($expected): Paginator {
+                          return $expected;
+                      });
+
+        $this->assertTrue($this->manager->paginator()->has());
+
+        $model->delete();
+
+        $this->assertFalse($this->manager->paginator()->has());
     }
 }

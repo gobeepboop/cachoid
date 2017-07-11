@@ -12,6 +12,7 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str as s;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Cache\TaggedCache;
 
 /**
  * Class Adapter
@@ -152,13 +153,16 @@ abstract class Adapter implements Contract
     protected function processTaggables(Closure $callback): Closure
     {
         if (! $this->cache->has($this->key())) {
-            $callback = function () use ($callback) {
-                return $this->eagerlyInvokeAndTag($callback);
+            $value = $this->eagerlyInvokeAndTag($callback);
+
+            $callback = function () use ($value) {
+                return $value;
             };
         }
 
-        if (! $this->tags->isEmpty()) {
-            $this->cache->tags($this->tags->toArray());
+        if ($this->tags->isNotEmpty()) {
+            $this->cache = $this->cache->tags($this->tags->toArray());
+            $this->tags  = new Collection;
         }
 
         return $callback;
@@ -196,9 +200,11 @@ abstract class Adapter implements Contract
 
         // Collect all of the model keys.
         // Afterwards merge with the tags after transformation.
-        $this->tags->merge(collect($this->determineIds($value))->transform(function ($key) use ($model) {
+        collect($this->determineIds($value))->transform(function ($key) use ($model) {
             return $this->generateUniqueModelTag($model, $key);
-        }));
+        })->each(function ($tag): void {
+            $this->tags->push($tag);
+        });
 
         return $paginator ?? $value;
     }
@@ -213,7 +219,7 @@ abstract class Adapter implements Contract
      */
     protected function generateUniqueModelTag($model, $key): string
     {
-        return is_numeric($key) === true ? $this->transformClassName($model) . ".$key" : $key;
+        return is_numeric($key) === true ? "{$this->transformClassName($model)}-$key" : $key;
     }
 
     /**

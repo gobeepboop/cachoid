@@ -41,8 +41,8 @@ trait DeterminesModelIdentifiers
      *
      * @return bool
      */
-    private function usesCacheable($item): bool
+    protected function usesCacheable($item): bool
     {
-        return ! is_object($item) || ! in_array(Cacheable::class, class_uses_recursive($item), true);
+        return in_array(Cacheable::class, class_uses_recursive($item));
     }
 }

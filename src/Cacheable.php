@@ -33,6 +33,11 @@ trait Cacheable
      */
     public function cacheable(): void
     {
+        // If the model wasn't previously created, destroy any collected and paginated models.
+        if (! $this->wasRecentlyCreated) {
+            $this->bustable();
+        }
+
         $this->getCachoidManager()->eloquent(self::class, $this->getKey())->rememberForever(function () {
             return $this;
         });

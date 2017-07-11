@@ -3,6 +3,7 @@
 namespace Beep\Cachoid\Concerns;
 
 use Closure;
+use Illuminate\Support\Collection;
 use ReflectionMethod;
 use ReflectionException;
 use ReflectionParameter;
@@ -12,7 +13,8 @@ use Illuminate\Cache\TaggedCache as Cache;
  * Trait DynamicallyResolveCache
  *
  * @package Beep\Cachoid\Concerns
- * @property Cache $cache
+ * @property Cache      $cache
+ * @property Collection $tags
  */
 trait DynamicallyResolveCache
 {
@@ -27,7 +29,13 @@ trait DynamicallyResolveCache
     public function __call($method, $parameters)
     {
         $closure = function (?array $params = null) use ($method, $parameters) {
-            return $this->cache->$method(...($params ?? $parameters));
+            $cache = $this->cache;
+
+            if (! $this->tags->isEmpty()) {
+                $cache = $cache->tags($this->tags->toArray());
+            }
+
+            return $cache->$method(...($params ?? $parameters));
         };
 
         if (! is_string($method)) {
