@@ -6,4 +6,4 @@ Additionally, the `ModelObserver` class can be binded in `AppServiceProvider::bo
 
 # ToDo
 * Documentation clean-up.
-* Extensively more tests!
+* An extensive set of tests, with Mockery, and a build-up of the SQLite "feature" tests (such as ModelObserverTest)
