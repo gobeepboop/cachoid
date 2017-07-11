@@ -75,7 +75,7 @@ class ModelObserverTest extends TestCase
     public function test_models_are_cached_when_saved(): void
     {
         $user   = $this->tapAndSaveUser();
-        $actual = $this->manager->eloquent()->get("models:users:{$user->id}");
+        $actual = $this->manager->eloquent()->get("eloquent:users:{$user->id}");
 
         $this->assertInstanceOf(User::class, $actual);
     }

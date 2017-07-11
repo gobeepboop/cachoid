@@ -12,6 +12,15 @@ interface Adapter
     public function driver(): CacheContract;
 
     /**
+     * Sets the default keys.
+     *
+     * @param \string[]|[] ...$keys
+     *
+     * @return Adapter
+     */
+    public function setDefaultKeys(...$keys);
+
+    /**
      * Tags the data.
      *
      * @param array $tags

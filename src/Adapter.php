@@ -2,6 +2,7 @@
 
 namespace Beep\Cachoid;
 
+use Beep\Cachoid\Concerns\DynamicallyResolveCache;
 use Closure;
 use Beep\Cachoid\Contracts\Adapter as Contract;
 use Illuminate\Contracts\Cache\Repository as CacheContract;
@@ -15,9 +16,12 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
  * Class Adapter
  *
  * @mixin Cache
+ * @method bool has(?string $key = null)
  */
 abstract class Adapter implements Contract
 {
+    use DynamicallyResolveCache;
+
     /**
      * @var Cache
      */
@@ -32,6 +36,13 @@ abstract class Adapter implements Contract
      * @var string
      */
     protected $name;
+
+    /**
+     * Indicates default keys to be prefixed to namespace.
+     *
+     * @var array
+     */
+    protected $defaultKeys = [];
 
     /**
      * Create a new Adapter instance.
@@ -107,16 +118,13 @@ abstract class Adapter implements Contract
     }
 
     /**
-     * Dynamically handles method calls.
-     *
-     * @param   string     $method
-     * @param   array|null $parameters
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function __call($method, $parameters)
+    public function setDefaultKeys(...$keys)
     {
-        return $this->cache->$method(...$parameters);
+        $this->defaultKeys = is_array($keys[0]) ? $keys[0] : $keys;
+
+        return $this;
     }
 
     /**
@@ -184,21 +192,21 @@ abstract class Adapter implements Contract
         // Collect all of the model keys.
         // Afterwards merge with the tags after transformation.
         $this->tags->merge(collect($value->modelKeys())->transform(function ($key) use ($model) {
-            return $this->boostEntropyForModelTag($model, $key);
+            return $this->generateUniqueModelTag($model, $key);
         }));
 
         return $paginator ?? $value;
     }
 
     /**
-     * Boosts entropy on a tagged model and key.
+     * Generates a unique model tag.
      *
      * @param mixed      $model
      * @param string|int $key
      *
      * @return string
      */
-    protected function boostEntropyForModelTag($model, $key): string
+    protected function generateUniqueModelTag($model, $key): string
     {
         return is_numeric($key) === true ? $this->transformClassName($model) . ".$key" : $key;
     }
@@ -214,5 +222,33 @@ abstract class Adapter implements Contract
     {
         return is_object($class) || class_exists($class) === true
             ? s::lower(s::snake(s::plural(class_basename($class)))) : $class;
+    }
+
+    /**
+     * Builds the key.
+     *
+     * @param null|string $name
+     * @param array       ...$namespacedBy
+     *
+     * @return string
+     */
+    protected function buildKey(?string $name, ... $namespacedBy): string
+    {
+        $seperator = ':';
+        $key = new Collection;
+
+        if (! is_null($name)) {
+            $key->push($name);
+        }
+
+        $key->push($this->defaultKeys);
+
+        if (! empty($namespacedBy)) {
+            $key->push($namespacedBy);
+        }
+
+        return $key->flatten()->filter(function ($item): bool {
+            return ! is_null($item);
+        })->implode($seperator);
     }
 }

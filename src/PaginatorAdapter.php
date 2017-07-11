@@ -88,6 +88,6 @@ class PaginatorAdapter extends Adapter implements Contract
      */
     protected function key(): string
     {
-        return "paginator:{$this->name}:{$this->perPage}:{$this->page}";
+        return $this->buildKey('paginator', $this->name, $this->perPage, $this->page);
     }
 }

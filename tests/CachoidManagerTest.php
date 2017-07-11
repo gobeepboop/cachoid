@@ -50,6 +50,6 @@ class CachoidManagerTest extends TestCase
             return 'test';
         });
 
-        $this->assertTrue($eloquent->has('models:tests:bar'));
+        $this->assertTrue($eloquent->has('eloquent:tests:bar'));
     }
 }
