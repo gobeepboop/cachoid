@@ -182,7 +182,7 @@ abstract class Adapter implements Contract
         $model = $value->first();
 
         // Collect all of the model keys.
-        // Aftewards merge with the tags after transformation.
+        // Afterwards merge with the tags after transformation.
         $this->tags->merge(collect($value->modelKeys())->transform(function ($key) use ($model) {
             return $this->boostEntropyForModelTag($model, $key);
         }));
