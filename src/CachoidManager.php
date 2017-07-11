@@ -14,9 +14,11 @@ use Illuminate\Support\Manager;
 class CachoidManager extends Manager
 {
     /**
+     * The parameters to append to the built-in adapters.
+     *
      * @var array
      */
-    protected $constructorArguments = [];
+    protected $appendableParameters = [];
 
     /**
      * Creates a new Eloquent driver.
@@ -25,7 +27,7 @@ class CachoidManager extends Manager
      */
     public function createEloquentDriver(): EloquentAdapter
     {
-        return new EloquentAdapter($this->app['cache'], ...$this->constructorArguments);
+        return new EloquentAdapter($this->app['cache'], ...$this->appendableParameters);
     }
 
     /**
@@ -35,7 +37,7 @@ class CachoidManager extends Manager
      */
     public function createCollectionDriver(): CollectionAdapter
     {
-        return new CollectionAdapter($this->app['cache'], ...$this->constructorArguments);
+        return new CollectionAdapter($this->app['cache'], ...$this->appendableParameters);
     }
 
     /**
@@ -45,7 +47,7 @@ class CachoidManager extends Manager
      */
     public function createPaginatorDriver(): PaginatorAdapter
     {
-        return new PaginatorAdapter($this->app['cache'], ...$this->constructorArguments);
+        return new PaginatorAdapter($this->app['cache'], ...$this->appendableParameters);
     }
 
     /**
@@ -67,7 +69,7 @@ class CachoidManager extends Manager
     public function __call($method, $parameters)
     {
         if (! empty($parameters)) {
-            $this->constructorArguments = $parameters;
+            $this->appendableParameters = $parameters;
         }
 
         return parent::driver($method);
