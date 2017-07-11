@@ -2,6 +2,7 @@
 
 namespace Beep\Cachoid;
 
+use Beep\Cachoid\Concerns\DeterminesModelIdentifiers;
 use Beep\Cachoid\Concerns\DynamicallyResolveCache;
 use Closure;
 use Beep\Cachoid\Contracts\Adapter as Contract;
@@ -20,7 +21,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
  */
 abstract class Adapter implements Contract
 {
-    use DynamicallyResolveCache;
+    use DynamicallyResolveCache, DeterminesModelIdentifiers;
 
     /**
      * @var Cache
@@ -191,7 +192,7 @@ abstract class Adapter implements Contract
 
         // Collect all of the model keys.
         // Afterwards merge with the tags after transformation.
-        $this->tags->merge(collect($value->modelKeys())->transform(function ($key) use ($model) {
+        $this->tags->merge(collect($this->determineIds($value))->transform(function ($key) use ($model) {
             return $this->generateUniqueModelTag($model, $key);
         }));
 

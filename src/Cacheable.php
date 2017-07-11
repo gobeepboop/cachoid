@@ -39,6 +39,16 @@ trait Cacheable
     }
 
     /**
+     * Get the identifier to cache as.
+     *
+     * @return mixed
+     */
+    public function cacheableAs()
+    {
+        return $this->getKey();
+    }
+
+    /**
      * Set the Cachoid Manager instance.
      *
      * @param CachoidManager $cachoidManager
