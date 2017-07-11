@@ -152,7 +152,9 @@ abstract class Adapter implements Contract
      */
     protected function processTaggables(Closure $callback): Closure
     {
+        // Determine if the cache doesn't have the item.
         if (! $this->cache->has($this->key())) {
+            // Resolve the value, and tag internally.
             $value = $this->eagerlyInvokeAndTag($callback);
 
             $callback = function () use ($value) {
@@ -160,6 +162,7 @@ abstract class Adapter implements Contract
             };
         }
 
+        // If tags are present, we will rebind the cache driver and reset the tags.
         if ($this->tags->isNotEmpty()) {
             $this->cache = $this->cache->tags($this->tags->toArray());
             $this->tags  = new Collection;
@@ -192,9 +195,7 @@ abstract class Adapter implements Contract
         }
 
         // Tap for the first value to determine the Model.
-        $model = $value->first();
-
-        if (! $this->usesCacheable($model)) {
+        if (! $this->usesCacheable($model = $value->first())) {
             return $paginator ?? $value;
         }
 
@@ -242,6 +243,8 @@ abstract class Adapter implements Contract
      * @param array       ...$namespacedBy
      *
      * @return string
+     *
+     * @see Adapter::key()
      */
     protected function buildKey(?string $name, ... $namespacedBy): string
     {
