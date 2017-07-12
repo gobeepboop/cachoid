@@ -15,14 +15,16 @@ class Cachoid
     /**
      * Registers implicit route bindings for models.
      *
-     * @param Model[] $models
+     * @param Model[]|string[] $models
      *
      * @return void
      */
-    public static function routeable(Model ...$models): void
+    public static function routeable(...$models): void
     {
-        collect($models)->each(function (Model $model): void {
-            static::$application->make(RouteBindRegistrar::class)->model($model);
+        collect($models)->transform(function ($model) {
+            return class_exists($model) ? new $model : $model;
+        })->each(function (Model $model): void {
+            static::getApplication()->make(RouteBindRegistrar::class)->model($model);
         });
     }
 
@@ -31,7 +33,7 @@ class Cachoid
      */
     public static function getApplication(): Application
     {
-        return self::$application ?? (static::$application = app());
+        return static::$application ?? app();
     }
 
     /**
@@ -39,6 +41,6 @@ class Cachoid
      */
     public static function setApplication(Application $application)
     {
-        self::$application = $application;
+        static::$application = $application;
     }
 }
