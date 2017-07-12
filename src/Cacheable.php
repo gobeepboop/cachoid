@@ -2,6 +2,7 @@
 
 namespace Beep\Cachoid;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -24,6 +25,24 @@ trait Cacheable
     public static function bootCacheable(): void
     {
         static::observe(ModelObserver::class);
+
+        (new static)->bootCacheableMacros();
+    }
+
+    /**
+     * Boot the macros for the Builder.
+     *
+     * @return void
+     */
+    public function bootCacheableMacros(): void
+    {
+        $static = static::class;
+
+        Builder::macro('findInCache', function (string $identifier) use ($static) {
+            return (function () use ($identifier) {
+                return $this->findInCacheOrWarm($identifier);
+            })->bindTo(new $static, $static)();
+        });
     }
 
     /**
@@ -73,6 +92,21 @@ trait Cacheable
     public static function setCachoidManager(CachoidManager $cachoidManager)
     {
         static::$cachoidManager = $cachoidManager;
+    }
+
+    /**
+     * Finds a model in the cache and stores it.
+     *
+     * @param string $identifier
+     *
+     * @return static|null
+     */
+    protected function findInCacheOrWarm(string $identifier)
+    {
+        return $this->getCachoidManager()->eloquent(static::class, $identifier)
+                                         ->rememberForever(function () use ($identifier) {
+                                             return $this->find($identifier);
+                                         });
     }
 
     /**

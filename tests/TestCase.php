@@ -39,9 +39,13 @@ class TestCase extends Base
 
         $app = new Container;
 
+        // Set the store as a singleton to assist with
+        // cross driver usage.
         $app->singleton(StoreContract::class, ArrayStore::class);
 
         $app->bind(CacheContract::class, Cache::class);
+
+        // Set a dispatcher when resolving a cache contract.
         $app->resolving(CacheContract::class, function ($cache, $app): void {
             $cache->setEventDispatcher(new Dispatcher);
         });
@@ -49,6 +53,7 @@ class TestCase extends Base
         $app->alias(CacheContract::class, 'cache');
 
         $db = new DB($app);
+
         $db->addConnection([
             'driver'   => 'sqlite',
             'database' => ':memory:',
@@ -65,6 +70,7 @@ class TestCase extends Base
         });
 
         $this->app = $app;
+
         $this->manager = new CachoidManager($this->app);
 
         User::setCachoidManager($this->manager);

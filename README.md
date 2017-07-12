@@ -16,6 +16,11 @@ Next, you should add the `CachoidServiceProvider` to the `providers` array of yo
 \Beep\Cachoid\CachoidServiceProvider::class,
 ```
 
+If `Cachoid` facade usage is preferred, add to the `aliases` array of your `config/app.php`:
+```php
+'Cachoid' => Illuminate\Support\Facades\App::class,
+```
+
 Finally, add the `Beep\Cachoid\Cacheable` trait to the model you would like to make cacheable. This trait will register a model observer to keep the model synchronized with Cachoid:
 ```php
 <?php

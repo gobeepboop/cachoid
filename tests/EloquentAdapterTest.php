@@ -5,7 +5,6 @@ namespace Beep\Cachoid\Tests;
 use Beep\Cachoid\EloquentAdapter;
 use Illuminate\Cache\ArrayStore;
 use Illuminate\Cache\Repository;
-use PHPUnit\Framework\TestCase;
 
 class EloquentAdapterTest extends TestCase
 {
@@ -14,7 +13,7 @@ class EloquentAdapterTest extends TestCase
      */
     protected $adapter;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -62,5 +61,24 @@ class EloquentAdapterTest extends TestCase
                       });
 
         $this->assertTrue($this->adapter->has($key));
+    }
+
+    /**
+     * Tests cached models can be found with findInCache.
+     */
+    public function test_cached_models_can_be_found(): void
+    {
+        /** @var User $expected */
+        $expected = tap(new User(['name' => 'Robbie']))->save();
+
+        $this->assertInstanceOf(User::class, User::findInCache($expected->id));
+
+        // Flush the event listeners to ensure the above logic
+        // pulled from the cache itself as the delete shouldn't
+        // trigger the bustable() method.
+        User::flushEventListeners();
+        $expected->delete();
+
+        $this->assertInstanceOf(User::class, $this->manager->eloquent(User::class, $expected->id)->get());
     }
 }
