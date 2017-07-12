@@ -57,7 +57,7 @@ trait Cacheable
             $this->bustable();
         }
 
-        $this->getCachoidManager()->eloquent(self::class, $this->getKey())->rememberForever(function () {
+        $this->getCachoidManager()->eloquent(self::class, $this->cacheableAs())->rememberForever(function () {
             return $this;
         });
     }

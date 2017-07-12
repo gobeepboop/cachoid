@@ -51,17 +51,17 @@ class EloquentAdapter extends Adapter implements AdapterContract
     /**
      * Destroys a model.
      *
-     * @param Model $model
+     * @param Model|Cacheable $model
      *
      * @return bool
      */
     public function destroy(Model $model)
     {
         // Set the key.
-        $this->withName($model)->identifiedBy($model->getKey());
+        $this->withName($model)->identifiedBy($model->cacheableAs());
 
         // Flush all the potentially collected and paginated tags of the model.
-        $this->cache->tags([$this->generateUniqueModelTag($model, $model->getKey())])->flush();
+        $this->cache->tags([$this->generateUniqueModelTag($model, $model->cacheableAs())])->flush();
 
         // Destroy the model itself from the cache.
         return $this->cache->forget($this->key());
