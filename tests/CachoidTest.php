@@ -2,7 +2,7 @@
 
 namespace Beep\Cachoid\Tests;
 
-use Beep\Cachoid\Cachoid;
+use Beep\Cachoid\Facade;
 use Beep\Cachoid\CachoidManager;
 use Beep\Cachoid\EloquentAdapter;
 
@@ -21,7 +21,7 @@ class CachoidTest extends TestCase
             return $this->manager;
         });
 
-        Cachoid::setFacadeApplication($this->app);
+        Facade::setFacadeApplication($this->app);
     }
 
     /**
@@ -29,6 +29,6 @@ class CachoidTest extends TestCase
      */
     public function test_facade_references_cachoid_manager(): void
     {
-        $this->assertInstanceOf(EloquentAdapter::class, Cachoid::eloquent());
+        $this->assertInstanceOf(EloquentAdapter::class, Facade::eloquent());
     }
 }

@@ -4,7 +4,7 @@ namespace Beep\Cachoid;
 
 use Illuminate\Support\Facades\Facade as Base;
 
-class Cachoid extends Base
+class Facade extends Base
 {
     /**
      * {@inheritdoc}
