@@ -3,16 +3,16 @@
 namespace Beep\Cachoid\Tests;
 
 use Beep\Cachoid\CachoidManager;
+use Illuminate\Contracts\Cache\Factory;
+use Illuminate\Cache\CacheManager;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Events\Dispatcher;
 use PHPUnit\Framework\TestCase as Base;
 use Illuminate\Database\Capsule\Manager as DB;
-use Illuminate\Cache\ArrayStore;
-use Illuminate\Cache\Repository as Cache;
 use Illuminate\Contracts\Cache\Repository as CacheContract;
-use Illuminate\Contracts\Cache\Store as StoreContract;
+use Illuminate\Config\Repository as Configuration;
 
 class TestCase extends Base
 {
@@ -37,22 +37,35 @@ class TestCase extends Base
         Eloquent::unguard();
         Eloquent::setEventDispatcher(new Dispatcher);
 
-        $app = new Container;
-
-        // Set the store as a singleton to assist with
-        // cross driver usage.
-        $app->singleton(StoreContract::class, ArrayStore::class);
-
-        $app->bind(CacheContract::class, Cache::class);
+        $this->app = new Container;
 
         // Set a dispatcher when resolving a cache contract.
-        $app->resolving(CacheContract::class, function ($cache, $app): void {
+        $this->app->resolving(CacheContract::class, function ($cache, $app): void {
             $cache->setEventDispatcher(new Dispatcher);
         });
 
-        $app->alias(CacheContract::class, 'cache');
+        $this->app->instance('config', new Configuration([
+            'cache' => [
+                'stores'    => [
+                    'array' => [
+                        'driver' => 'array'
+                    ]
+                ]
+            ]
+        ]));
 
-        $db = new DB($app);
+        // Setup the Cache Manager and set the default driver.
+        $this->app->singleton(CacheManager::class, function (): CacheManager {
+            $manager = new CacheManager($this->app);
+            $manager->setDefaultDriver('array');
+            return $manager;
+        });
+
+        // Bind the contract to the concrete, then alias.
+        $this->app->singleton(Factory::class, CacheManager::class);
+        $this->app->alias(Factory::class, 'cache');
+
+        $db = new DB($this->app);
 
         $db->addConnection([
             'driver'   => 'sqlite',
@@ -68,8 +81,6 @@ class TestCase extends Base
             $table->string('name');
             $table->timestamps();
         });
-
-        $this->app = $app;
 
         $this->manager = new CachoidManager($this->app);
 

@@ -34,7 +34,7 @@ class CachoidManager extends Manager
      */
     public function createEloquentDriver(): EloquentAdapter
     {
-        return new EloquentAdapter($this->app['cache'], ...$this->appendableParameters);
+        return new EloquentAdapter($this->getCacheStore(), ...$this->appendableParameters);
     }
 
     /**
@@ -44,7 +44,7 @@ class CachoidManager extends Manager
      */
     public function createCollectionDriver(): CollectionAdapter
     {
-        return new CollectionAdapter($this->app['cache'], ...$this->appendableParameters);
+        return new CollectionAdapter($this->getCacheStore(), ...$this->appendableParameters);
     }
 
     /**
@@ -54,7 +54,7 @@ class CachoidManager extends Manager
      */
     public function createPaginatorDriver(): PaginatorAdapter
     {
-        return new PaginatorAdapter($this->app['cache'], ...$this->appendableParameters);
+        return new PaginatorAdapter($this->getCacheStore(), ...$this->appendableParameters);
     }
 
     /**
@@ -120,5 +120,15 @@ class CachoidManager extends Manager
         }
 
         return $driver;
+    }
+
+    /**
+     * Get the Cache store.
+     *
+     * @return mixed
+     */
+    protected function getCacheStore()
+    {
+        return $this->app['cache']->store();
     }
 }

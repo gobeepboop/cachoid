@@ -4,12 +4,6 @@ namespace Beep\Cachoid\Tests;
 
 use Beep\Cachoid\CachoidManager;
 use Beep\Cachoid\EloquentAdapter;
-use Illuminate\Cache\Repository as Cache;
-use Illuminate\Contracts\Cache\Repository as CacheContract;
-use Illuminate\Contracts\Cache\Store as StoreContract;
-use Illuminate\Cache\ArrayStore;
-use Illuminate\Container\Container;
-use PHPUnit\Framework\TestCase;
 
 class CachoidManagerTest extends TestCase
 {
@@ -23,16 +17,9 @@ class CachoidManagerTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-
-        $app = new Container();
-        $app->bind(StoreContract::class, ArrayStore::class);
-        $app->bind(CacheContract::class, Cache::class);
-        $app->alias(CacheContract::class, 'cache');
-
-        $this->manager = new CachoidManager($app);
     }
 
     /**
