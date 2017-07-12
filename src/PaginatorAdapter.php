@@ -90,4 +90,20 @@ class PaginatorAdapter extends Adapter implements Contract
     {
         return $this->buildKey('paginator', $this->name, $this->perPage, $this->page);
     }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param Paginator $value
+     */
+    protected function bootEagerlyLoaded($value): void
+    {
+        if ($value->perPage()) {
+            $this->showing($value->perPage());
+        }
+
+        if ($value->currentPage()) {
+            $this->onPage($value->currentPage());
+        }
+    }
 }

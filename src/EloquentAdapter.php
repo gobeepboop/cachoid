@@ -82,4 +82,12 @@ class EloquentAdapter extends Adapter implements AdapterContract
     {
         return false;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function bootEagerlyLoaded($value): void
+    {
+        //
+    }
 }

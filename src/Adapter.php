@@ -12,7 +12,6 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str as s;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Cache\TaggedCache;
 
 /**
  * Class Adapter
@@ -137,6 +136,15 @@ abstract class Adapter implements Contract
     abstract protected function shouldTagModelKeys(): bool;
 
     /**
+     * Allows for eagerly loaded callback values to override tags.
+     *
+     * @param mixed $value
+     *
+     * @return void
+     */
+    abstract protected function bootEagerlyLoaded($value): void;
+
+    /**
      * Determines the stored key.
      *
      * @return string
@@ -187,6 +195,9 @@ abstract class Adapter implements Contract
         if (! $this->shouldTagModelKeys($value)) {
             return $value;
         }
+
+        // Boot the eagerly loaded value.
+        $this->bootEagerlyLoaded($value);
 
         // Pull the Collection from the Paginator.
         if ($value instanceof Paginator) {

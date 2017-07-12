@@ -90,4 +90,14 @@ class CollectionAdapter extends Adapter implements Contract
     {
         return func_get_arg(0) instanceof Collection;
     }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param Collection $value
+     */
+    protected function bootEagerlyLoaded($value): void
+    {
+        $this->cappedAt = ! empty($this->cappedAt) && is_int($this->cappedAt) ? $this->cappedAt : $value->count();
+    }
 }

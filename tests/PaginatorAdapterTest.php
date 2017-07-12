@@ -85,4 +85,27 @@ class PaginatorAdapterTest extends TestCase
 
         $this->assertFalse($this->manager->paginator()->has());
     }
+
+    /**
+     * Test cached paginators will infer metadata for the key.
+     *
+     * @return void
+     */
+    public function test_cached_freshly_stored_paginator_without_page_metadata(): void
+    {
+        $page    = 1;
+        $perPage = 15;
+
+        $expected = new Paginator(new Collection([
+            new User(['id' => 1, 'name' => 'Robbie']),
+            new User(['id' => 2, 'name' => 'Michael']),
+        ]), $perPage, $page);
+
+        $this->manager->paginator()->withName(User::class)
+                      ->remember(10, function () use ($expected): Paginator {
+                          return $expected;
+                      });
+
+        $this->assertTrue($this->manager->paginator()->has("paginator:users:$perPage:$page"));
+    }
 }
