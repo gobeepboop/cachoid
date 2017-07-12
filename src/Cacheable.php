@@ -80,13 +80,25 @@ trait Cacheable
     }
 
     /**
+     * Transforms the cacheableAs key.
+     *
+     * @param mixed $key
+     *
+     * @return mixed
+     */
+    public function cacheableThrough($key)
+    {
+        return $key;
+    }
+
+    /**
      * Get the identifier to cache as.
      *
      * @return mixed
      */
     public function cacheableAs()
     {
-        return method_exists($this, 'cacheableThrough') ? $this->cacheableThrough($this->getKey()) : $this->getKey();
+        return $this->cacheableThrough($this->getKey());
     }
 
     /**
@@ -114,13 +126,13 @@ trait Cacheable
     /**
      * Finds a model in the cache and stores it.
      *
-     * @param string $identifier
+     * @param mixed $identifier
      *
      * @return static|null
      */
-    protected function findInCacheOrWarm(string $identifier)
+    protected function findInCacheOrWarm($identifier)
     {
-        return $this->getCachoidManager()->eloquent(static::class, $identifier)
+        return $this->getCachoidManager()->eloquent(static::class, $this->cacheableThrough($identifier))
                                          ->rememberForever(function () use ($identifier) {
                                              return $this->find($identifier);
                                          });
