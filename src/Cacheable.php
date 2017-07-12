@@ -86,7 +86,7 @@ trait Cacheable
      */
     public function cacheableAs()
     {
-        return $this->getKey();
+        return method_exists($this, 'cacheableThrough') ? $this->cacheableThrough($this->getKey()) : $this->getKey();
     }
 
     /**
