@@ -14,6 +14,13 @@ use Illuminate\Support\Manager;
 class CachoidManager extends Manager
 {
     /**
+     * Sets the default keys.
+     *
+     * @var array
+     */
+    protected $defaultKeys;
+
+    /**
      * The parameters to append to the built-in adapters.
      *
      * @var array
@@ -51,6 +58,16 @@ class CachoidManager extends Manager
     }
 
     /**
+     * Sets default keys.
+     *
+     * @param array $keys
+     */
+    public function setDefaultKeys(...$keys): void
+    {
+        $this->defaultKeys = is_array($keys[0]) ? $keys[0] : $keys;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getDefaultDriver()
@@ -84,5 +101,24 @@ class CachoidManager extends Manager
     public function driver($driver = null)
     {
         //
+    }
+
+    /**
+     * Create a new driver instance.
+     *
+     * @param  string  $driver
+     * @return mixed
+     *
+     * @throws \InvalidArgumentException
+     */
+    protected function createDriver($driver)
+    {
+        $driver = parent::createDriver($driver);
+
+        if (! empty($this->defaultKeys)) {
+            $driver->setDefaultKeys($this->defaultKeys);
+        }
+
+        return $driver;
     }
 }

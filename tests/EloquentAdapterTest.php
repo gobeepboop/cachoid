@@ -52,15 +52,15 @@ class EloquentAdapterTest extends TestCase
         $randomId = '12345';
         $key      = 'eloquent:' . $randomId . ':users:' . $expected->id;
 
-        $this->adapter->setDefaultKeys($randomId);
+        $this->manager->setDefaultKeys($randomId);
 
-        $this->adapter->withName(User::class)
+        $this->manager->eloquent()->withName(User::class)
                       ->identifiedBy($expected->id)
                       ->remember(10, function () use ($expected): ?User {
                           return $expected;
                       });
 
-        $this->assertTrue($this->adapter->has($key));
+        $this->assertTrue($this->manager->eloquent()->has());
     }
 
     /**
