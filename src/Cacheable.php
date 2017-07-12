@@ -18,6 +18,13 @@ trait Cacheable
     protected static $cachoidManager;
 
     /**
+     * The amount of time, in minutes, to cache the model.
+     *
+     * @var int
+     */
+    protected $cacheableFor = 30;
+
+    /**
      * Boot the Cacheable trait and register the model observer.
      *
      * @return void
@@ -80,6 +87,16 @@ trait Cacheable
     public function cacheableAs()
     {
         return $this->getKey();
+    }
+
+    /**
+     * Get the time, in minutes, for caching the model.
+     *
+     * @return int
+     */
+    public function cacheableFor(): int
+    {
+        return $this->cacheableFor;
     }
 
     /**

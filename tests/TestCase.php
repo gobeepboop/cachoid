@@ -88,6 +88,18 @@ class TestCase extends Base
     }
 
     /**
+     * Tear down the test case.
+     *
+     * @return void
+     */
+    public function tearDown(): void
+    {
+        parent::tearDown();
+
+        \Mockery::close();
+    }
+
+    /**
      * Gets the Schema Builder.
      *
      * @return mixed

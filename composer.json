@@ -12,7 +12,8 @@
     "require": {
         "illuminate/support": "^5.4",
         "illuminate/cache": "^5.4",
-        "illuminate/database": "^5.4"
+        "illuminate/database": "^5.4",
+        "mockery/mockery": "^0.9.9"
     },
     "autoload": {
         "psr-4": {
@@ -24,6 +25,7 @@
         "phpunit/phpunit": "^6.2",
         "illuminate/pagination": "^5.4",
         "illuminate/events": "^5.4",
-        "illuminate/config": "^5.4"
+        "illuminate/config": "^5.4",
+        "illuminate/routing": "^5.4"
     }
 }

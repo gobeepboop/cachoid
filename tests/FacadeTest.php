@@ -6,7 +6,7 @@ use Beep\Cachoid\Facade;
 use Beep\Cachoid\CachoidManager;
 use Beep\Cachoid\EloquentAdapter;
 
-class CachoidTest extends TestCase
+class FacadeTest extends TestCase
 {
     /**
      * Setup the Test Case.
