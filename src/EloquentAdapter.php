@@ -19,18 +19,16 @@ class EloquentAdapter extends Adapter implements AdapterContract
     protected $identifier;
 
     /**
-     * Create a new EloquentAdapter instance.
-     *
-     * @param CacheContract $cache
-     * @param string|null   $name
-     * @param string|null   $identifier
+     * {@inheritdoc}
      */
-    public function __construct(CacheContract $cache, $name = null, $identifier = null)
+    public function configure(...$attributes): void
     {
-        parent::__construct($cache);
+        if ($name = data_get($attributes, 0)) {
+            $this->withName($name);
+        }
 
-        if (! is_null($name) && ! is_null($identifier)) {
-            $this->withName($name)->identifiedBy($identifier);
+        if ($identifier = data_get($attributes, 1)) {
+            $this->identifiedBy($identifier);
         }
     }
 

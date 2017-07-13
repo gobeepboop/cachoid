@@ -12,6 +12,15 @@ interface Adapter
     public function driver(): CacheContract;
 
     /**
+     * Configures the driver.
+     *
+     * @param array ...$attributes
+     *
+     * @return void
+     */
+    public function configure(...$attributes): void;
+
+    /**
      * Sets the default keys.
      *
      * @param \string[]|[] ...$keys

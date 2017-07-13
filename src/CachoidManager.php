@@ -119,6 +119,10 @@ class CachoidManager extends Manager
             $driver->setDefaultKeys($this->defaultKeys);
         }
 
+        if (! empty($this->appendableParameters)) {
+            $driver->configure(...$this->appendableParameters);
+        }
+
         return $driver;
     }
 

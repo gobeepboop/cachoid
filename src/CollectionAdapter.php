@@ -23,26 +23,19 @@ class CollectionAdapter extends Adapter implements Contract
     protected $offset = 0;
 
     /**
-     * Create a new CollectionAdapter instance.
-     *
-     * @param CacheContract $cache
-     * @param string|null   $name
-     * @param int|null      $cappedAt
-     * @param int|null      $offset
+     * {@inheritdoc}
      */
-    public function __construct(CacheContract $cache, $name = null, ?int $cappedAt = null, ?int $offset = null)
+    public function configure(...$attributes): void
     {
-        parent::__construct($cache);
-
-        if (! is_null($name)) {
+        if ($name = data_get($attributes, 0)) {
             $this->withName($name);
         }
 
-        if (is_int($cappedAt)) {
+        if (($cappedAt = data_get($attributes, 1)) && is_int($cappedAt)) {
             $this->cappedAt($cappedAt);
         }
 
-        if (is_int($offset)) {
+        if (($offset = data_get($attributes, 2)) && is_int($offset)) {
             $this->withOffset($offset);
         }
     }

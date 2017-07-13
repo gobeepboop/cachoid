@@ -49,12 +49,22 @@ abstract class Adapter implements Contract
      * Create a new Adapter instance.
      *
      * @param CacheContract $cache
+     * @param string        $name
      */
-    public function __construct(CacheContract $cache)
+    public function __construct(CacheContract $cache, $name = null)
     {
         $this->cache = $cache;
         $this->tags  = new Collection;
+
+        if (! empty($name)) {
+            $this->withName($name);
+        }
     }
+
+    /**
+     * @inheritdoc
+     */
+    abstract public function configure(...$attributes): void;
 
     /**
      * {@inheritdoc}
@@ -189,8 +199,8 @@ abstract class Adapter implements Contract
     protected function eagerlyInvokeAndTag(Closure $closure)
     {
         /** @var EloquentCollection|mixed $value */
-        $value      = value($closure);
-        $paginator  = null;
+        $value     = value($closure);
+        $paginator = null;
 
         if (! $this->shouldTagModelKeys($value)) {
             return $value;
@@ -260,7 +270,7 @@ abstract class Adapter implements Contract
     protected function buildKey(?string $name, ... $namespacedBy): string
     {
         $seperator = ':';
-        $key = new Collection;
+        $key       = new Collection;
 
         if (! is_null($name)) {
             $key->push($name);

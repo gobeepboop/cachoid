@@ -23,26 +23,19 @@ class PaginatorAdapter extends Adapter implements Contract
     protected $perPage = 0;
 
     /**
-     * Create a new PaginatorAdapter instance.
-     *
-     * @param CacheContract $cache
-     * @param string|null   $name
-     * @param int|null      $perPage
-     * @param int|null      $page
+     * {@inheritdoc}
      */
-    public function __construct(CacheContract $cache, $name = null, ?int $perPage = null, ?int $page = null)
+    public function configure(...$attributes): void
     {
-        parent::__construct($cache);
-
-        if ($name) {
+        if ($name = data_get($attributes, 0)) {
             $this->withName($name);
         }
 
-        if (is_int($perPage)) {
+        if (($perPage = data_get($attributes, 1)) && is_int($perPage)) {
             $this->showing($perPage);
         }
 
-        if (is_int($page)) {
+        if (($page = data_get($attributes, 2)) && is_int($page)) {
             $this->onPage($page);
         }
     }
