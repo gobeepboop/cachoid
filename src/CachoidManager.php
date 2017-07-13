@@ -89,7 +89,18 @@ class CachoidManager extends Manager
             $this->appendableParameters = $parameters;
         }
 
-        return parent::driver($method);
+        $driver = parent::driver($method);
+
+        if (! empty($this->defaultKeys)) {
+            $driver->setDefaultKeys($this->defaultKeys);
+        }
+
+        if (! empty($this->appendableParameters)) {
+            $driver->configure(...$this->appendableParameters);
+            $this->appendableParameters = [];
+        }
+
+        return $driver;
     }
 
     /**
@@ -101,29 +112,6 @@ class CachoidManager extends Manager
     public function driver($driver = null)
     {
         //
-    }
-
-    /**
-     * Create a new driver instance.
-     *
-     * @param  string  $driver
-     * @return mixed
-     *
-     * @throws \InvalidArgumentException
-     */
-    protected function createDriver($driver)
-    {
-        $driver = parent::createDriver($driver);
-
-        if (! empty($this->defaultKeys)) {
-            $driver->setDefaultKeys($this->defaultKeys);
-        }
-
-        if (! empty($this->appendableParameters)) {
-            $driver->configure(...$this->appendableParameters);
-        }
-
-        return $driver;
     }
 
     /**
