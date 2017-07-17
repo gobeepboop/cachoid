@@ -3,8 +3,9 @@
 namespace Beep\Cachoid;
 
 use Beep\Cachoid\Contracts\Adapter as Contract;
-use Illuminate\Contracts\Cache\Repository as CacheContract;
+use Illuminate\Pagination\Paginator as IlluminatePaginator;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Model;
 
 class PaginatorAdapter extends Adapter implements Contract
 {
@@ -31,13 +32,20 @@ class PaginatorAdapter extends Adapter implements Contract
             $this->withName($name);
         }
 
+        // Attempt to resolve a model.
+        $model = ! is_object($name) && class_exists($name) ? new $name : $name;
+
+        if ($model instanceof Model) {
+            $this->showing($model->getPerPage());
+        }
+
         if (($perPage = data_get($attributes, 1)) && is_int($perPage)) {
             $this->showing($perPage);
         }
 
-        if (($page = data_get($attributes, 2)) && is_int($page)) {
-            $this->onPage($page);
-        }
+        $page = ($page = data_get($attributes, 2)) && is_int($page) ? $page : IlluminatePaginator::resolveCurrentPage();
+
+        $this->onPage($page);
     }
 
     /**

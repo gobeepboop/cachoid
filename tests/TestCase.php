@@ -14,7 +14,7 @@ use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Contracts\Cache\Repository as CacheContract;
 use Illuminate\Config\Repository as Configuration;
 
-class TestCase extends Base
+abstract class TestCase extends Base
 {
     /**
      * @var Container

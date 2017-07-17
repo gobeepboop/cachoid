@@ -108,4 +108,33 @@ class PaginatorAdapterTest extends TestCase
 
         $this->assertTrue($this->manager->paginator()->has("paginator:users:$perPage:$page"));
     }
+
+    /**
+     * Tests that the Paginator page resolver is used to resolve current page.
+     *
+     * @return void
+     */
+    public function test_paginator_resolves_correct_page(): void
+    {
+        $page = 2;
+        $perPage = 15;
+
+        $expected = new Paginator(new Collection([
+            new User(['id' => 1, 'name' => 'Robbie']),
+            new User(['id' => 2, 'name' => 'Michael']),
+        ]), $perPage, $page);
+
+        $this->manager->paginator()->withName(User::class)
+                      ->remember(10, function () use ($expected): Paginator {
+                          return $expected;
+                      });
+
+        $this->assertTrue($this->manager->paginator()->has("paginator:users:$perPage:$page"));
+
+        Paginator::currentPageResolver(function () use ($page) {
+            return $page;
+        });
+
+        $this->assertInstanceOf(Paginator::class, $this->manager->paginator(User::class)->get());
+    }
 }
