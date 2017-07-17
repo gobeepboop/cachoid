@@ -43,12 +43,11 @@ trait Cacheable
      */
     public function bootCacheableMacros(): void
     {
-        $static = static::class;
-
-        Builder::macro('findInCache', function (string $identifier) use ($static) {
-            return (function () use ($identifier) {
+        Builder::macro('findInCache', function (string $identifier) {
+            $model = $this->model;
+            return (function () use ($model, $identifier) {
                 return $this->findInCacheOrWarm($identifier);
-            })->bindTo(new $static, $static)();
+            })->bindTo($model, get_class($model))();
         });
     }
 
@@ -133,9 +132,9 @@ trait Cacheable
     protected function findInCacheOrWarm($identifier)
     {
         return $this->getCachoidManager()->eloquent(static::class, $this->cacheableThrough($identifier))
-                                         ->rememberForever(function () use ($identifier) {
-                                             return $this->find($identifier);
-                                         });
+                    ->rememberForever(function () use ($identifier) {
+                        return $this->find($identifier);
+                    });
     }
 
     /**
