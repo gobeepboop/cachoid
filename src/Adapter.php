@@ -94,7 +94,7 @@ abstract class Adapter implements Contract
      */
     public function tags(array $tags)
     {
-        $this->tags->push($tags)->flatten();
+        $this->tags = $this->tags->push($tags)->flatten();
 
         return $this;
     }
@@ -215,8 +215,9 @@ abstract class Adapter implements Contract
             $value     = $paginator->getCollection();
         }
 
+        // Check the collection has values.
         // Tap for the first value to determine the Model.
-        if (! $this->usesCacheable($model = $value->first())) {
+        if ($value->isEmpty() || ! $this->usesCacheable($model = $value->first())) {
             return $paginator ?? $value;
         }
 
