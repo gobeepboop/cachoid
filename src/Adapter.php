@@ -283,8 +283,8 @@ abstract class Adapter implements Contract
             $key->push($namespacedBy);
         }
 
-        return $key->flatten()->filter(function ($item): bool {
+        return hash('SHA256', $key->flatten()->filter(function ($item): bool {
             return ! is_null($item);
-        })->implode($seperator);
+        })->implode($seperator));
     }
 }

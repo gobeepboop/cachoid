@@ -37,6 +37,6 @@ class CachoidManagerTest extends TestCase
             return 'test';
         });
 
-        $this->assertTrue($eloquent->has('eloquent:tests:bar'));
+        $this->assertTrue($eloquent->has($this->hash('eloquent:tests:bar')));
     }
 }

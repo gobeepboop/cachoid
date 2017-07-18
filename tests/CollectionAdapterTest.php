@@ -6,7 +6,6 @@ use Beep\Cachoid\CollectionAdapter;
 use Illuminate\Cache\ArrayStore;
 use Illuminate\Cache\Repository;
 use Illuminate\Database\Eloquent\Collection;
-use PHPUnit\Framework\TestCase;
 
 class CollectionAdapterTest extends TestCase
 {
@@ -15,7 +14,7 @@ class CollectionAdapterTest extends TestCase
      */
     protected $adapter;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -44,9 +43,9 @@ class CollectionAdapterTest extends TestCase
                           return $expected;
                       });
 
-        $this->assertTrue($this->adapter->has($key));
+        $this->assertTrue($this->adapter->has($this->hash($key)));
 
-        $actual = $this->adapter->get($key);
+        $actual = $this->adapter->get($this->hash($key));
         $this->assertInstanceOf(Collection::class, $actual);
         $this->assertEquals(2, $actual->count());
     }

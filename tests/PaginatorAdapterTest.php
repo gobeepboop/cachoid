@@ -48,9 +48,9 @@ class PaginatorAdapterTest extends TestCase
                           return $expected;
                       });
 
-        $this->assertTrue($this->adapter->has($key));
+        $this->assertTrue($this->adapter->has($this->hash($key)));
 
-        $actual = $this->adapter->get($key);
+        $actual = $this->adapter->get($this->hash($key));
         $this->assertInstanceOf(Paginator::class, $actual);
         $this->assertEquals(2, $actual->count());
     }
@@ -106,7 +106,7 @@ class PaginatorAdapterTest extends TestCase
                           return $expected;
                       });
 
-        $this->assertTrue($this->manager->paginator()->has("paginator:users:$perPage:$page"));
+        $this->assertTrue($this->manager->paginator()->has($this->hash("paginator:users:$perPage:$page")));
     }
 
     /**
@@ -129,7 +129,7 @@ class PaginatorAdapterTest extends TestCase
                           return $expected;
                       });
 
-        $this->assertTrue($this->manager->paginator()->has("paginator:users:$perPage:$page"));
+        $this->assertTrue($this->manager->paginator()->has($this->hash("paginator:users:$perPage:$page")));
 
         Paginator::currentPageResolver(function () use ($page) {
             return $page;

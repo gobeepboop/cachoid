@@ -118,4 +118,16 @@ abstract class TestCase extends Base
     {
         return Eloquent::getConnectionResolver()->connection();
     }
+
+    /**
+     * Helper method to hash keys.
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    protected function hash(string $value): string
+    {
+        return hash('SHA256', $value);
+    }
 }

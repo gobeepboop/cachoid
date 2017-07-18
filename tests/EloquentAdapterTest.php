@@ -38,7 +38,7 @@ class EloquentAdapterTest extends TestCase
                           return $expected;
                       });
 
-        $this->assertTrue($this->adapter->has($key));
+        $this->assertTrue($this->adapter->has($this->hash($key)));
     }
 
     /**
