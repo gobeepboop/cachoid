@@ -90,11 +90,11 @@ abstract class Adapter implements Contract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
-    public function tags(array $tags): Contract
+    public function tags(array $tags)
     {
-        $this->tags->merge($tags)->flatten();
+        $this->tags->push($tags)->flatten();
 
         return $this;
     }

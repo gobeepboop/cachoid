@@ -34,7 +34,7 @@ interface Adapter
      *
      * @param array $tags
      *
-     * @return Adapter
+     * @return $this
      */
-    public function tags(array $tags): Adapter;
+    public function tags(array $tags);
 }

@@ -63,9 +63,10 @@ trait Cacheable
             $this->bustable();
         }
 
-        $this->getCachoidManager()->eloquent(self::class, $this->cacheableAs())->rememberForever(function () {
-            return $this;
-        });
+        $this->getCachoidManager()->eloquent(self::class, $this->cacheableAs())
+                                  ->remember($this->cacheableFor(), function () {
+                                      return $this;
+                                  });
     }
 
     /**
@@ -132,9 +133,9 @@ trait Cacheable
     protected function findInCacheOrWarm($identifier)
     {
         return $this->getCachoidManager()->eloquent(static::class, $this->cacheableThrough($identifier))
-                    ->rememberForever(function () use ($identifier) {
-                        return $this->find($identifier);
-                    });
+                                         ->remember($this->cacheableFor(), function () use ($identifier) {
+                                             return $this->find($identifier);
+                                         });
     }
 
     /**
